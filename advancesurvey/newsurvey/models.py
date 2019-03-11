@@ -45,7 +45,7 @@ class Employee(models.Model):
 class Survey(models.Model):
     survey_name = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
-    date = models.DateTimeField(default=timezone.now)
+    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.survey_name
@@ -103,6 +103,9 @@ class Question(models.Model):
 class SurveyEmployee(models.Model):
     employee = models.ManyToManyField(Employee)
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE)
+    Start_date =models.DateTimeField(default=True)
+    End_Date = models.DateField(default=True)
+
 
 
 class SurveyQuestion(models.Model):

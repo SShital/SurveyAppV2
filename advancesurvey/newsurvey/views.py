@@ -114,7 +114,6 @@ def add_org(request):
 
     return render(request, "newsurvey/org.html")
 
-
 def getorgdata(request):
     org = list()
     total_record = 0
@@ -210,3 +209,30 @@ def Add_Survey(request):
         else:
             return redirect('index')
     return render(request, 'newsurvey/addsurveypage.html')
+
+def getSuvey_list(request):
+    totalSurvey = Survey.objects.all()
+
+    context = {'total_survey': totalSurvey}
+
+    print("context",context)
+    return HttpResponse(json.dumps(list(context)), content_type="application/json")
+
+
+def Assign_Survey(request):
+    surveycount = list()
+
+    totalSurvey = Survey.objects.all()
+    print("totalSurvey",totalSurvey)
+    print("surveycount************",surveycount)
+
+    surveycount.append(totalSurvey)
+
+
+    return render(request,'newsurvey/assign_survey.html',{'total_surveylist': totalSurvey})
+
+
+
+
+
+

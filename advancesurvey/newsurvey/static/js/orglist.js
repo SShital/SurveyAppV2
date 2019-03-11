@@ -4,12 +4,25 @@ getOrgnisationData();
 $("#datetimepicker1").datetimepicker({
       format: 'DD/MM/YYYY HH:mm',
     });
-$("#add_ordbtn").on('click',function(){
+$("#add_ordbtn").click(function(){
 
-//     $("#formGroupExampleInput").val('');
-//     $("#formGroupExampleInput2").val('');
-//     $("#formGroupExampleInput3").val('');
 })
+
+$("#add_Surveybtn").on('click',function(){
+    $.ajax({
+       type:"GET",
+        url: "/newsurvey/getSuvey_list",
+
+      success: function(result) {
+        console.log("print result",result)
+        alert('ok');
+      },
+      error: function(result) {
+        alert('error');
+      }
+    });
+})
+
 })
 
 function getOrgnisationData(){

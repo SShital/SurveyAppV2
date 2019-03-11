@@ -10,5 +10,8 @@ urlpatterns = [
     path('admin_register/',views.admin_register,name='admin_register'),
     path('upload_csv/', views.upload_csv, name='upload_csv'),
     path('Add_Survey/', views.Add_Survey, name='Add_Survey'),
+    path('getSuvey_list/', views.getSuvey_list, name='getSuvey_list'),
+    path('Assign_Survey/',views.Assign_Survey,name='Assign_Survey')
+
 
 ]

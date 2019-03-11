@@ -1,0 +1,35 @@
+{% extends "newsurvey/index.html"%}
+{% load staticfiles %}
+{% block content %}
+<section class="table section">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Employee List</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" class="form-horizontal">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label class="control-label" for="Survey">Total Surveys:</label>
+                                {% for c in total_surveylist %}
+                                <div class="checkbox">
+                                    <lable><input type="checkbox" value="{{c.survey_name}}">{{ c.survey_name }}</lable>
+                                </div>
+                                  {% endfor %}
+
+                            </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+</section>
+{% endblock %}

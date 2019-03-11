@@ -48,33 +48,32 @@
           <div class="sidenav-header-inner text-center">
             <h2 class="h5">Admin</h2>
           </div>
-         
+
         </div>
         <!-- Sidebar Navigation Menus-->
                 <div class="main-menu">
                   <h5 class="sidenav-heading">Main</h5>
                   <ul id="side-main-menu" class="side-menu list-unstyled">
-                    {% if user.is_authenticated and user.superuser == True %}
+
+                    {% if user.is_authenticated and user.is_superuser %}
                       <li>
                        <a id="addorg" href="{% url 'add_org'%}"> Add Organisation</a>
                      </li>
                     <li>
                         <a id="" href="{% url 'admin_register'%}"> Add Org Admin</a>
                     </li>
-
-                  {% else %}
+                     {% else %}
                       <li><a href="{% url 'upload_csv' %}">Add Employess </a></li>
-                  <li><a href="{% url 'Add_Survey' %}">Add Survey </a></li>
-                  <li><a href="#">Assign Survey</a></li>
-                  <li><a href="#">Add Questions</a></li>
-
-                  {% endif %}
+                      <li><a href="{% url 'Add_Survey' %}">Add Survey </a></li>
+                      <li><a href="{% url 'Assign_Survey' %}">Assign Survey</a></li>
+                      <li><a href="#">Add Questions</a></li>
+                    {% endif %}
           </ul>
 
         </div>
     </div>
     </nav>
-	
+
 <div class="page">
     <!-- navbar-->
     <header class="header">
@@ -119,9 +118,8 @@
 
 
     {% endblock %}
-
-
 </div>
+
     <footer class="main-footer">
         <div class="container-fluid">
           <div class="row">
