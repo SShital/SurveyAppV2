@@ -1,6 +1,9 @@
+"""
+Admin modules
+"""
 from django.contrib import admin
-from .models import Organization,org_Admin,Employee,Survey,SurveyEmployee,SurveyQuestion,SurveyResponse
-
+from .models import (Organization, org_Admin, Employee,
+                     Survey, SurveyEmployee, SurveyQuestion, SurveyResponse)
 
 admin.site.register(Organization)
 admin.site.register(org_Admin)

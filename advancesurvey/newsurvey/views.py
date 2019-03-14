@@ -1,10 +1,12 @@
+"""
+views for surveyadvance
+"""
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 import json
-from django.contrib.auth.decorators import login_required
 from .forms import LoginForm, AdminForm, EventsForm
-from .models import Organization, org_Admin,Employee,Survey,SurveyEmployee,SurveyQuestion,SurveyResponse
-from django.contrib.auth import authenticate, login
+from .models import (Organization, org_Admin, Employee, Survey,
+                    SurveyEmployee, SurveyQuestion, SurveyResponse)
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
@@ -13,42 +15,28 @@ from django.urls import reverse
 import logging
 import datetime
 
-
 # Create your views here.
 def index(request):
     return render(request, 'newsurvey/index.html')
 
-
 @csrf_exempt
 def login(request):
-    print("calling post method")
     form = LoginForm()
     context = {'form': form}
 
     if request.method == "POST":
-        print("Entering into post method")
         username = request.POST.get("username")
         password = request.POST.get("password")
-        print("username", username)
-        print("password", password)
 
     try:
-        Usersdata = User.objects.filter(username=username, password=password)
-        print(str(Usersdata))
-
-        if (User.objects.filter(username=username).exists()):
-            # User.objects.create_user(username, password)
+        usersdata = User.objects.filter(username=username, password=password)
+        if(User.objects.filter(username=username).
+                exists()):
             user = authenticate(username=username, password=password)
-
             return redirect('index')
         elif org_Admin.objects.get(admin_username=username, password=password):
-            print("hello else iff")
             m = request.session['username'] = username
-            # m1 = {'session': m}
-
-            print("Session Name = " + m)
             return redirect('index')
-
     except Exception as e:
         print('Exception ', e)
         data = {'success': 'false', 'message': 'Invalid Username or Password'}
@@ -59,23 +47,20 @@ def login(request):
 
 @csrf_exempt
 def admin_register(request):
+    """
+    Admin register
+    """
     form = AdminForm()
     context = {'form': form}
     if request.method == "POST":
         ad_username = request.POST.get("adminname")
         ad_password = request.POST.get("ad_password")
-
         m = request.POST.get('OrgnisationName')
-        print("mm",m)
         Org_names = Organization.objects.get(company_name=m)
-
-        print("ad_username", ad_username)
-        print("ad_password", ad_password, request.POST.get('email'), request.POST.get('OrgnisationName'),
-              request.POST.get('password'))
-        print("Entering into post method")
-
-        if request.POST.get('adminname') and request.POST.get('username') and request.POST.get(
-                'email') and request.POST.get('OrgnisationName') and request.POST.get('password'):
+        if request.POST.get('adminname') and request.POST.get('username')\
+                and request.POST.get(
+                'email') and request.POST.get('OrgnisationName') \
+                and request.POST.get('password'):
             registerObject = org_Admin()
             registerObject.admin_name = request.POST.get('adminname')
             registerObject.admin_username = request.POST.get('username')
@@ -91,6 +76,9 @@ def admin_register(request):
 
 
 def logout(request):
+    """
+    Session logout
+    """
     try:
         del request.session['username']
     except KeyError:
@@ -99,42 +87,47 @@ def logout(request):
 
 
 def add_org(request):
+    """
+    add organization admin
+    """
     if request.method == "POST":
-        print("Entering into post method")
 
-        if request.POST.get('org_name') and request.POST.get('org_loc') and request.POST.get('org_desc'):
-            OrgnizationObject = Organization()
-            OrgnizationObject.company_name = request.POST.get('org_name')
-            OrgnizationObject.location = request.POST.get('org_loc')
-            OrgnizationObject.description = request.POST.get('org_desc')
-            OrgnizationObject.save()
+        if request.POST.get('org_name') and request.POST.get('org_loc') \
+                and request.POST.get('org_desc'):
+            organization_object = Organization()
+            organization_object.company_name = request.POST.get('org_name')
+            organization_object.location = request.POST.get('org_loc')
+            organization_object.description = request.POST.get('org_desc')
+
+            organization_object.save()
             return redirect("add_org")
         else:
             return redirect('index')
 
     return render(request, "newsurvey/org.html")
 
-def getorgdata(request):
-    org = list()
-    total_record = 0
-    orgDetails1 = Organization.objects.all()
-    org.append(orgDetails1)
 
+def getorgdata(request):
+    """
+    get organisation list
+    """
+    org = list()
+    org_details1 = Organization.objects.all()
+    org.append(org_details1)
     i = 0
     temp_list = []
     data = {}
-    for org1 in orgDetails1:
+    for org1 in org_details1:
         i = i + 1
         temp_list = [i, str(org1.company_name), str(org1.location), str(org1.description)]
-
-
     data = {'completeData': temp_list}
-    print("mydata", data)
 
     return HttpResponse(json.dumps(data), content_type="application/json")
 
-
 def upload_csv(request):
+    """
+    csv extract
+    """
     data = {}
     if "GET" == request.method:
         return render(request, "newsurvey/emplist.html", data)
@@ -155,7 +148,6 @@ def upload_csv(request):
 
         # loop over the lines and save them in db. If error , store as string and then display
         for line in lines:
-            print("lines*************",line != "")
             if line != "":
                 fields = line.split(",")
                 data_dict = {}
@@ -166,73 +158,71 @@ def upload_csv(request):
                 data_dict["emp_address"] = fields[4]
                 data_dict["company"] = fields[5]
                 m = (data_dict["company"]).strip()
-                print("m===>", m)
-                print("compare", m == "abc")
                 Org_names = Organization.objects.get(company_name=m)
-                print("Org_names===>", Org_names)
+
                 try:
                     form = EventsForm(data_dict)
-                    # OrgEmployeeObj = Employee()
-                    OrgEmployeeObj = Employee()
-                    OrgEmployeeObj.emp_name = data_dict["emp_name"]
-                    OrgEmployeeObj.emp_username = data_dict["emp_username"]
-                    OrgEmployeeObj.emp_password = data_dict["emp_password"]
-                    OrgEmployeeObj.emp_designation = data_dict["emp_designation"]
-                    OrgEmployeeObj.emp_address = data_dict["emp_address"]
-                    OrgEmployeeObj.company = Org_names
+                    org_employee_obj = Employee()
+                    org_employee_obj.emp_name = data_dict["emp_name"]
+                    org_employee_obj.emp_username = data_dict["emp_username"]
+                    org_employee_obj.emp_password = data_dict["emp_password"]
+                    org_employee_obj.emp_designation = data_dict["emp_designation"]
+                    org_employee_obj.emp_address = data_dict["emp_address"]
+                    org_employee_obj.company = Org_names
 
-                    OrgEmployeeObj.save()
+                    org_employee_obj.save()
                 except Exception as e:
                     logging.getLogger("error_logger").error(repr(e))
                     pass
 
     except Exception as e:
         logging.getLogger("error_logger").error("Unable to upload file. " + repr(e))
-        # import traceback
-        # traceback.print_exc()
         messages.error(request, "Unable to upload file. " + repr(e))
 
     return HttpResponseRedirect(reverse("upload_csv"))
 
-def Add_Survey(request):
-    if request.method == "POST":
-        print("Entering into post method")
 
-        if request.POST.get('sur_name') and request.POST.get('sur_desc'):
-            print("add Survey")
-            SurveyObj1 = Survey()
-            SurveyObj1.survey_name = request.POST.get('sur_name')
-            SurveyObj1.description = request.POST.get('sur_desc')
-            SurveyObj1.date = datetime.datetime.now()
-            SurveyObj1.save()
+def Add_Survey(request):
+    """
+    adding multiple surveys
+    """
+    if request.method == "POST":
+        if request.POST.get('sur_name') \
+                and request.POST.get('sur_desc'):
+
+            survey_obj1 = Survey()
+            survey_obj1.survey_name = request.POST.get('sur_name')
+            survey_obj1.description = request.POST.get('sur_desc')
+            survey_obj1.date = datetime.datetime.now()
+            survey_obj1.save()
             return redirect("Add_Survey")
         else:
             return redirect('index')
     return render(request, 'newsurvey/addsurveypage.html')
 
+
 def getSuvey_list(request):
-    totalSurvey = Survey.objects.all()
-
-    context = {'total_survey': totalSurvey}
-
-    print("context",context)
+    """
+    getting survey list
+    """
+    total_survey = Survey.objects.all()
+    context = {'total_survey': total_survey}
     return HttpResponse(json.dumps(list(context)), content_type="application/json")
 
 
 def Assign_Survey(request):
-    surveycount = list()
-
-    totalSurvey = Survey.objects.all()
-    print("totalSurvey",totalSurvey)
-    print("surveycount************",surveycount)
-
-    surveycount.append(totalSurvey)
-
-
-    return render(request,'newsurvey/assign_survey.html',{'total_surveylist': totalSurvey})
-
-
-
-
-
+    """
+    assigning_survey
+    :param request:
+    :return:
+    """
+    survey_count = list()
+    total_emplist = list()
+    total_survey = Survey.objects.all()
+    survey_count.append(total_survey)
+    emp_list = Employee.objects.all()
+    total_emplist.append(emp_list)
+    return render(request, 'newsurvey/assign_survey.html',
+                  {'total_surveylist': total_survey},
+                  {'emplist': total_emplist})
 

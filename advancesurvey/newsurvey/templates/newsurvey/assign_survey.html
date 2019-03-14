@@ -14,13 +14,13 @@
                         <form method="POST" class="form-horizontal">
                             {% csrf_token %}
                             <div class="form-group">
-                                <label class="control-label" for="Survey">Total Surveys:</label>
+                                <label class="control-label" for="Survey"><h5>Total Surveys:</h5></label>
                                 {% for c in total_surveylist %}
-                                <div class="checkbox">
-                                    <lable><input type="checkbox" value="{{c.survey_name}}">{{ c.survey_name }}</lable>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck1" value="{{c.survey_name}}">
+                                  <label class="form-check-label" for="exampleCheck1">{{ c.survey_name }}</label>
                                 </div>
                                   {% endfor %}
-
                             </div>
                     </form>
                     </div>
